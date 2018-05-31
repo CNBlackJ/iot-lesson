@@ -1,16 +1,22 @@
 #include <Arduino.h>
 
-int LED_PIN = 5;
+int START_PIN = 2;
+int END_PIN = 7;
+int index = 0;
 
 void setup() {
     // put your setup code here, to run once:
-    pinMode(LED_PIN, OUTPUT);
+    for (int i = START_PIN; i <= END_PIN; i++) {
+			pinMode(i, OUTPUT);
+		}
 }
 
 void loop() {
     // put your main code here, to run repeatedly:
-    digitalWrite(LED_PIN, HIGH);
-    delay(1000);
-    digitalWrite(LED_PIN, LOW);
-    delay(1000);
+    for (int i = START_PIN; i <= END_PIN; i++) {
+			digitalWrite(i, LOW);
+		}
+    digitalWrite(START_PIN + index, HIGH);
+		index = (index + 1) % (END_PIN - START_PIN + 1);
+    delay(100);
 }
