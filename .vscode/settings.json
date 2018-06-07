@@ -8,5 +8,6 @@
 		"*.wpy": "vue",
 		"stdint.h": "c",
 		"io.h": "c"
-	}
+	},
+	"C_Cpp.errorSquiggles": "Disabled"
 }
