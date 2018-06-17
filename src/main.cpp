@@ -10,13 +10,12 @@ void setup()
 }
 void loop()
 {
-//   int val = analogRead(A0);
-//   int numLedsToLight = map(val, 0, 1023, 0, NUM_LEDS);
+  int val = analogRead(A0);
+  int numLedsToLight = map(val, 0, 1023, 0, NUM_LEDS);
 
-//   FastLED.clear(); // 清除LED灯的现存状态
-  for(int led = 0; led < NUM_LEDS; led++) {
-    // leds[led] = CRGB::Blue;
-    leds[led].setRGB( 15 * led, 68, 221);
+  FastLED.clear(); // 清除LED灯的现存状态
+  for(int led = 0; led < numLedsToLight; led++) {
+    leds[led] = CRGB::Blue;
   }
   FastLED.show();
 }
