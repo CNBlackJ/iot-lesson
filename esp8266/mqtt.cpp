@@ -5,9 +5,9 @@
 #include <Adafruit_INA219.h>
  
 // Connect to the WiFi
-const char* ssid = "qianbailang";
-const char* password = "********";
-const char* mqtt_server = "192.168.1.60";
+const char* ssid = "your_wifi_name";
+const char* password = "your_wifi_password";
+const char* mqtt_server = "your_mqtt_server";
  
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -21,10 +21,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
  for (int i=0;i<length;i++) {
   char receivedChar = (char)payload[i];
   Serial.print(receivedChar);
-  if (receivedChar == '0')
+  if (receivedChar == '1')
   // ESP8266 Huzzah outputs are "reversed"
   digitalWrite(ledPin, HIGH);
-  if (receivedChar == '1')
+  if (receivedChar == '0')
    digitalWrite(ledPin, LOW);
   }
   Serial.println();
