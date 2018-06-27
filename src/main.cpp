@@ -1,30 +1,71 @@
-#include <Arduino.h>
+//************************************************************
+// this is a simple example that uses the painlessMesh library to 
+// setup a node that logs to a central logging node
+// The logServer example shows how to configure the central logging nodes
+//************************************************************
+#include "painlessMesh.h"
 
-int latchPin = 8;
-int clockPin = 12;
-int dataPin = 11; //这里定义了那三个脚
-void setup ()
-{
-  Serial.begin(9600);
-  pinMode(latchPin,OUTPUT);
-  pinMode(clockPin,OUTPUT);
-  pinMode(dataPin,OUTPUT); //让三个脚都是输出状态
+#define   MESH_PREFIX     "whateverYouLike"
+#define   MESH_PASSWORD   "somethingSneaky"
+#define   MESH_PORT       5555
+
+Scheduler     userScheduler; // to control your personal task
+painlessMesh  mesh;
+
+// Prototype
+void receivedCallback( uint32_t from, String &msg );
+
+size_t logServerId = 0;
+
+// Send message to the logServer every 10 seconds 
+Task myLoggingTask(10000, TASK_FOREVER, []() {
+    DynamicJsonBuffer jsonBuffer;
+    JsonObject& msg = jsonBuffer.createObject();
+    msg["topic"] = "sensor";
+    msg["value"] = random(0, 180);
+
+    String str;
+    msg.printTo(str);
+    if (logServerId == 0) // If we don't know the logServer yet
+        mesh.sendBroadcast(str);
+    else
+        mesh.sendSingle(logServerId, str);
+
+    // log to serial
+    msg.printTo(Serial);
+    Serial.printf("\n");
+});
+
+void setup() {
+  Serial.begin(115200);
+    
+  mesh.setDebugMsgTypes( ERROR | STARTUP | CONNECTION );  // set before init() so that you can see startup messages
+
+  mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT, WIFI_AP_STA, 6 );
+  mesh.onReceive(&receivedCallback);
+
+  // Add the task to the your scheduler
+  userScheduler.addTask(myLoggingTask);
+  myLoggingTask.enable();
 }
-void loop()
-{
-  for(int a=0; a<256; a++)   //这个循环的意思是让a这个变量+1一直加到到256，每次循环都进行下面的活动
-  {
-    digitalWrite(latchPin,LOW); //将ST_CP口上面加低电平让芯片准备好接收数据
-    shiftOut(dataPin,clockPin,MSBFIRST,a);
-    //这个就是用MSBFIRST参数让0-7个针脚以高电平输出（LSBFIRST 低电平）是dataPin的参数，
-    //clockPin的参数是变量a，前面我们说了这个变量会一次从1+1+到256，是个十进制数，
-    // 输入到芯片后会产生8个二进制数，达到开关的作用
-    Serial.println(a);
-    digitalWrite(latchPin,HIGH); //将ST_CP这个针脚恢复到高电平
-    delay(1000); //暂停1秒钟让你看到效果
+
+void loop() {
+    userScheduler.execute(); // it will run mesh scheduler as well
+    mesh.update();
+}
+
+void receivedCallback( uint32_t from, String &msg ) {
+  Serial.printf("logClient: Received from %u msg=%s\n", from, msg.c_str());
+
+  // Saving logServer
+  DynamicJsonBuffer jsonBuffer;
+  JsonObject& root = jsonBuffer.parseObject(msg);
+  if (root.containsKey("topic")) {
+      if (String("logServer").equals(root["topic"].as<String>())) {
+          // check for on: true or false
+          logServerId = root["nodeId"];
+          Serial.printf("logServer detected!!!\n");
+      }
+      Serial.printf("Handled from %u msg=%s\n", from, msg.c_str());
   }
-  // digitalWrite(latchPin,LOW); //将ST_CP口上面加低电平让芯片准备好接收数据
-  // shiftOut(dataPin,clockPin,MSBFIRST,255);
-  // digitalWrite(latchPin,HIGH); //将ST_CP这个针脚恢复到高电平
-  // delay(500);
 }
