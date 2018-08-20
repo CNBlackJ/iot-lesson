@@ -2,5 +2,12 @@
 	"terminal.integrated.env.osx": {
 		"PATH": "/Users/black_j/.platformio/penv/bin:/Users/black_j/.platformio/penv:/Users/black_j/.nvm/versions/node/v8.9.4/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/VMware Fusion.app/Contents/Public",
 		"PLATFORMIO_CALLER": "vscode"
-	}
+	},
+	"files.associations": {
+		"*.vue": "html",
+		"*.wpy": "vue",
+		"stdint.h": "c",
+		"io.h": "c"
+	},
+	"C_Cpp.errorSquiggles": "Disabled"
 }
