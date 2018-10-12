@@ -1,27 +1,5 @@
 #include "FastLED.h"
 
-<<<<<<< HEAD
-const int pinSensor = 10;
-const int pinLed = 9;
-int ismotion;
- 
-void setup() {
-  Serial.begin(9600); 
-  pinMode (pinSensor, INPUT);
-  pinMode (pinLed, OUTPUT);
-}
-void loop() {
-  ismotion = digitalRead(pinSensor);
-  Serial.println(ismotion);
-  if(ismotion == 1){                
-    digitalWrite(pinLed,HIGH);      
-    Serial.println("Detectived");    
-  }
-  else{
-    noTone(pinLed); 
-    Serial.println("Not Detectived"); 
-  }
-=======
 #define NUM_LEDS 16
 #define DATA_PIN 6
 
@@ -40,5 +18,4 @@ void loop()
     leds[led] = CRGB::Blue;
   }
   FastLED.show();
->>>>>>> 881d9d39f2511d49c8620373b4c8bea45116f579
 }

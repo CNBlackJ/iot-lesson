@@ -26,32 +26,29 @@ Servo servoY;
  
  
 void setup(){ 
- 
- // Debug console 
- Serial.begin(9600); 
- Blynk.begin(auth, ssid, pass); 
- pinMode(PWMA, OUTPUT); 
- pinMode(PWMB, OUTPUT); 
- pinMode(DA, OUTPUT); 
- pinMode(DB, OUTPUT); 
- 
+  // Debug console 
+  Serial.begin(9600); 
+  Blynk.begin(auth, ssid, pass); 
+  pinMode(PWMA, OUTPUT); 
+  pinMode(PWMB, OUTPUT); 
+  pinMode(DA, OUTPUT); 
+  pinMode(DB, OUTPUT); 
+  servoX.attach(3);
+  servoX.attach(6);
 } 
  
  
  
 void loop(){ 
-Blynk.run(); 
-  
+  Blynk.run(); 
 } 
 
 
 BLYNK_WRITE(V2){
   int servo_x = param[0].asInt(); 
   int servo_y = param[1].asInt();
-  Serial.print(servo_x);
-  Serial.println(servo_y);
   servoX.write(servo_x);
-  servoY.write(servo_y);
+  servoY.write(servo_x);
 }
  
  
